@@ -1,0 +1,140 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-gray-900 text-gray-100;
+  }
+}
+
+@layer components {
+  .gradient-bg {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  }
+  
+  .gradient-text {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .glass-effect {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .btn-primary {
+    @apply bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-primary-600 hover:to-secondary-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg;
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-800 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 border border-gray-600;
+  }
+  
+  .card {
+    @apply bg-gray-800 rounded-xl p-6 border border-gray-700 shadow-xl;
+  }
+  
+  .input-field {
+    @apply bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+  }
+
+  /* Enhanced visual effects */
+  .hero-pattern {
+    background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.1) 1px, transparent 0);
+    background-size: 40px 40px;
+  }
+
+  .floating-animation {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  .glow-effect {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+  }
+
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .backdrop-blur {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  /* Navbar spacing utility */
+  .pt-navbar {
+    padding-top: 4.5rem; /* Adjust based on navbar height */
+  }
+  
+  /* Ensure content doesn't overlap with fixed navbar */
+  .min-h-screen-navbar {
+    min-height: calc(100vh - 4.5rem);
+  }
+} 
+
+.bg-eggshell-white {
+  background-color: #FAF9F6;
+}
+
+.card-landing {
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 4px 24px 0 rgba(0,0,0,0.06), 0 1.5px 4px 0 rgba(0,0,0,0.03);
+  border: 1px solid #ececec;
+  padding: 2rem;
+  transition: box-shadow 0.2s;
+}
+.card-landing:hover {
+  box-shadow: 0 8px 32px 0 rgba(0,0,0,0.10), 0 2px 8px 0 rgba(0,0,0,0.04);
+}
+
+.btn-primary-landing {
+  background: linear-gradient(90deg, #4F46E5 0%, #06B6D4 100%);
+  color: #fff;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  box-shadow: 0 2px 8px 0 rgba(79,70,229,0.08);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.btn-primary-landing:hover {
+  background: linear-gradient(90deg, #4338CA 0%, #0891B2 100%);
+  box-shadow: 0 4px 16px 0 rgba(6,182,212,0.12);
+}
+
+.btn-secondary-light {
+  background: #f3f4f6;
+  color: #374151;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  border: 1px solid #e5e7eb;
+  transition: background 0.2s, color 0.2s;
+}
+.btn-secondary-light:hover {
+  background: #e5e7eb;
+  color: #111827;
+} 

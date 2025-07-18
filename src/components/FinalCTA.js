@@ -13,8 +13,19 @@ import {
   Clock,
   Play
 } from 'lucide-react'
+import Link from 'next/link'
 
 export default function FinalCTA() {
+  const colorMap = {
+    'soft-gold': 'from-soft-gold-500 to-soft-gold-600',
+    'emerald': 'from-emerald-500 to-emerald-600',
+    'deep-navy': 'from-deep-navy-500 to-deep-navy-600'
+  };
+  const guaranteeColorMap = {
+    'emerald': 'from-emerald-500 to-emerald-600',
+    'deep-navy': 'from-deep-navy-500 to-deep-navy-600',
+    'soft-gold': 'from-soft-gold-500 to-soft-gold-600'
+  };
   const benefits = [
     {
       icon: Star,
@@ -89,7 +100,7 @@ export default function FinalCTA() {
         >
           {benefits.map((benefit, index) => (
             <div key={index} className="text-center">
-              <div className={`w-16 h-16 bg-gradient-to-r from-${benefit.color}-500 to-${benefit.color}-600 rounded-2xl flex items-center justify-center mx-auto mb-4`}>
+              <div className={`w-16 h-16 bg-gradient-to-r ${colorMap[benefit.color]} rounded-2xl flex items-center justify-center mx-auto mb-4`}>
                 <benefit.icon className="w-8 h-8 text-white" />
               </div>
               <p className="text-gray-300 font-semibold">{benefit.text}</p>
@@ -124,10 +135,10 @@ export default function FinalCTA() {
                 <p className="text-gray-300 mb-4">
                   Get personalized AI feedback, improve your writing, and achieve better grades.
                 </p>
-                <button className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
+                <Link href="/auth/signup" className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
                   Start Free Trial
                   <ArrowRight className="w-4 h-4 ml-2" />
-                </button>
+                </Link>
               </div>
 
               {/* Institution CTA */}
@@ -139,10 +150,10 @@ export default function FinalCTA() {
                 <p className="text-gray-300 mb-4">
                   Scale your teaching impact with AI-powered tools and comprehensive analytics.
                 </p>
-                <button className="w-full bg-gradient-to-r from-deep-navy-500 to-deep-navy-600 hover:from-deep-navy-600 hover:to-deep-navy-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
+                <Link href="/auth/signup" className="w-full bg-gradient-to-r from-deep-navy-500 to-deep-navy-600 hover:from-deep-navy-600 hover:to-deep-navy-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
                   Start Free Trial
                   <ArrowRight className="w-4 h-4 ml-2" />
-                </button>
+                </Link>
               </div>
             </div>
           </div>
@@ -158,7 +169,7 @@ export default function FinalCTA() {
         >
           {guarantees.map((guarantee, index) => (
             <div key={index} className="text-center">
-              <div className={`w-16 h-16 bg-gradient-to-r from-${guarantee.color}-500 to-${guarantee.color}-600 rounded-2xl flex items-center justify-center mx-auto mb-4`}>
+              <div className={`w-16 h-16 bg-gradient-to-r ${guaranteeColorMap[guarantee.color]} rounded-2xl flex items-center justify-center mx-auto mb-4`}>
                 <guarantee.icon className="w-8 h-8 text-white" />
               </div>
               <p className="text-gray-300 font-semibold">{guarantee.text}</p>
@@ -184,16 +195,16 @@ export default function FinalCTA() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-white text-deep-navy-600 font-bold px-8 py-4 rounded-xl text-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
+              <Link href="/auth/signup" className="bg-white text-deep-navy-600 font-bold px-8 py-4 rounded-xl text-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
                 <GraduationCap className="w-5 h-5 mr-2" />
                 Start Free Trial Now
                 <ArrowRight className="w-5 h-5 ml-2" />
-              </button>
-              <button className="bg-transparent border-2 border-white text-white font-bold px-8 py-4 rounded-xl text-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
+              </Link>
+              <Link href="/contact" className="bg-transparent border-2 border-white text-white font-bold px-8 py-4 rounded-xl text-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
                 <Building className="w-5 h-5 mr-2" />
                 Schedule Demo
                 <ArrowRight className="w-5 h-5 ml-2" />
-              </button>
+              </Link>
             </div>
             
             <div className="mt-6 flex items-center justify-center space-x-6 text-sm text-white opacity-80">

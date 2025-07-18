@@ -104,34 +104,31 @@ const handler = NextAuth({
       try {
         console.log('DEBUG: session callback token:', token)
         console.log('DEBUG: session callback session.user before:', session.user)
-        // For development, add mock user data
-        if (process.env.NODE_ENV === 'development' && !process.env.MONGODB_URI) {
-          session.user.id = 'mock-user-id'
-          session.user.subscription = 'free'
-          session.user.assignmentsUsed = 0
-          session.user.assignmentsLimit = 1 // Ensure at least 1 for free users
-          return session
-        }
-        // If token has user info (credentials login), use it
-        if (token && token.role) {
-          session.user.id = token.id || token.userId || session.user.id
-          session.user.role = token.role
-          session.user.subscription = token.subscription
-          session.user.assignmentsUsed = token.assignmentsUsed
-          session.user.assignmentsLimit = token.assignmentsLimit
+        
+        // Always load real user data from database
+        await dbConnect()
+        const user = await User.findOne({ email: session.user.email })
+        
+        if (user) {
+          console.log('DEBUG: Found user in database:', { 
+            email: user.email, 
+            subscription: user.subscription, 
+            trialEndDate: user.trialEndDate,
+            role: user.role 
+          })
+          
+          session.user.id = user._id.toString()
+          session.user.subscription = user.subscription
+          session.user.trialEndDate = user.trialEndDate
+          session.user.institutionSubscription = user.institutionSubscription
+          session.user.institutionTrialEndDate = user.institutionTrialEndDate
+          session.user.assignmentsUsed = user.assignmentsUsed
+          session.user.assignmentsLimit = (user.assignmentsLimit == null ? 1 : user.assignmentsLimit)
+          session.user.role = user.role
         } else {
-          await dbConnect()
-          const user = await User.findOne({ email: session.user.email })
-          if (user) {
-            session.user.id = user._id.toString()
-            session.user.subscription = user.subscription
-            session.user.trialEndDate = user.trialEndDate // Ensure trialEndDate is included
-            session.user.institutionTrialEndDate = user.institutionTrialEndDate // For institution users
-            session.user.assignmentsUsed = user.assignmentsUsed
-            session.user.assignmentsLimit = (user.assignmentsLimit == null ? 1 : user.assignmentsLimit)
-            session.user.role = user.role // <-- Add this line
-          }
+          console.log('DEBUG: No user found in database for email:', session.user.email)
         }
+        
         console.log('DEBUG: session callback session.user after:', session.user)
         return session
       } catch (error) {

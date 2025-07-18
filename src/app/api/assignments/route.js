@@ -4,18 +4,25 @@ import dbConnect from '../../../lib/db'
 import User from '../../../models/User'
 import Assignment from '../../../models/Assignment'
 
+// Simple authOptions for this endpoint
+const authOptions = {
+  secret: process.env.NEXTAUTH_SECRET || 'your-secret-key-here',
+};
+
 export async function GET(request) {
   try {
-    const session = await getServerSession()
-    console.log('Session email:', session?.user?.email);
+    const session = await getServerSession(authOptions)
+    console.log('Assignments API - Session data:', session);
+
+    if (!session || !session.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
 
     await dbConnect()
-
-    const allUsers = await User.find({});
-    console.log('All user emails:', allUsers.map(u => u.email));
     
     const user = await User.findOne({ email: session.user.email })
     if (!user) {
+      console.log('User not found for email:', session.user.email);
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 

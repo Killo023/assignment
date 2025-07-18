@@ -1,11 +1,7 @@
 import { getServerSession } from 'next-auth/next';
+import { authOptions } from '../../../../lib/auth-config';
 import User from '../../../../models/User';
 import dbConnect from '../../../../lib/db';
-
-// Simple authOptions for this endpoint
-const authOptions = {
-  secret: process.env.NEXTAUTH_SECRET || 'your-secret-key-here',
-};
 
 export async function GET() {
   try {

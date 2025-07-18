@@ -15,6 +15,7 @@ import {
   Play
 } from 'lucide-react'
 import { useSession } from 'next-auth/react'
+import Link from 'next/link'
 
 export default function PricingPreview() {
   const { data: session } = useSession();
@@ -43,7 +44,7 @@ export default function PricingPreview() {
 
   const institutionPlan = {
     name: 'Institution Trial',
-    price: '$49.99',
+    price: '$49.99', // Ensure this is always $49.99
     period: 'per month',
     description: 'Complete platform access for evaluation',
     features: [
@@ -62,10 +63,7 @@ export default function PricingPreview() {
     popular: false
   }
 
-  // Role-based plan visibility
-  const canAccessStudentPlan = session?.user?.role === 'student';
-  const canAccessInstitutionPlan = session?.user?.role === 'admin' || session?.user?.role === 'professor';
-
+  // Always show both plans
   return (
     <section className="py-20 bg-gradient-to-br from-paper-white to-eggshell-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -99,14 +97,13 @@ export default function PricingPreview() {
         >
           <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {/* Student Trial */}
-            {(canAccessStudentPlan || !session) && (
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                viewport={{ once: true }}
-                className="group relative"
-              >
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              viewport={{ once: true }}
+              className="group relative"
+            >
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                   <div className="bg-gradient-to-r from-emerald-500 to-deep-navy-500 text-white px-4 py-2 rounded-full text-sm font-semibold flex items-center">
                     <Star className="w-4 h-4 mr-2" />
@@ -136,23 +133,20 @@ export default function PricingPreview() {
                     ))}
                   </div>
 
-                  <button className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
+                  <Link href="/auth/signup" className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
                     Start Free Trial
                     <ArrowRight className="w-4 h-4 ml-2" />
-                  </button>
+                  </Link>
                 </div>
               </motion.div>
-            )}
-
             {/* Institution Trial */}
-            {(canAccessInstitutionPlan || !session) && (
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                viewport={{ once: true }}
-                className="group relative"
-              >
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              viewport={{ once: true }}
+              className="group relative"
+            >
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                   <div className="bg-gradient-to-r from-deep-navy-500 to-emerald-500 text-white px-4 py-2 rounded-full text-sm font-semibold flex items-center">
                     <Crown className="w-4 h-4 mr-2" />
@@ -182,13 +176,12 @@ export default function PricingPreview() {
                     ))}
                   </div>
 
-                  <button className="w-full bg-gradient-to-r from-deep-navy-500 to-deep-navy-600 hover:from-deep-navy-600 hover:to-deep-navy-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
+                  <Link href="/contact" className="w-full bg-gradient-to-r from-deep-navy-500 to-deep-navy-600 hover:from-deep-navy-600 hover:to-deep-navy-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
                     Start Free Trial
                     <ArrowRight className="w-4 h-4 ml-2" />
-                  </button>
+                  </Link>
                 </div>
               </motion.div>
-            )}
           </div>
         </motion.div>
 

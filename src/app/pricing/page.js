@@ -73,11 +73,11 @@ export default function PricingPage() {
       ],
       popular: false,
       planType: 'premium',
-      restricted: !canAccessStudentPlan // Only students can subscribe
+      restricted: false // Always show
     },
     {
       name: 'Institution',
-      price: '$49.99',
+      price: '$49.99', // Ensure this is always $49.99
       period: 'per month',
       originalPrice: '$149',
       trialDays: 7,
@@ -96,7 +96,7 @@ export default function PricingPage() {
       ],
       popular: true,
       planType: 'institution',
-      restricted: !canAccessInstitutionPlan // Only admins/professors can subscribe
+      restricted: false // Always show
     }
   ]
 

@@ -11,6 +11,11 @@ export async function GET(request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    // Check if required environment variables are set
+    if (!process.env.PAYPAL_CLIENT_ID || !process.env.PAYPAL_CLIENT_SECRET) {
+      console.warn('PayPal credentials not configured, returning basic subscription info')
+    }
+
     await dbConnect()
     
     const user = await User.findOne({ email: session.user.email })
@@ -31,11 +36,12 @@ export async function GET(request) {
     }
 
     // If user has PayPal subscription, get additional details
-    if (user.paypalSubscriptionId && user.subscription !== 'free') {
+    if (user.paypalSubscriptionId && user.subscription !== 'free' && process.env.PAYPAL_CLIENT_ID && process.env.PAYPAL_CLIENT_SECRET) {
       try {
+        const accessToken = await getPayPalAccessToken()
         const paypalResponse = await fetch(`https://api-m.sandbox.paypal.com/v1/billing/subscriptions/${user.paypalSubscriptionId}`, {
           headers: {
-            'Authorization': `Bearer ${await getPayPalAccessToken()}`,
+            'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json'
           }
         })
@@ -48,6 +54,8 @@ export async function GET(request) {
             cycleExecutions: paypalData.billing_info?.cycle_executions,
             startTime: paypalData.start_time
           }
+        } else {
+          console.warn(`PayPal API returned ${paypalResponse.status}: ${paypalResponse.statusText}`)
         }
       } catch (error) {
         console.error('PayPal API error:', error)

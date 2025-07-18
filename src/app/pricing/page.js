@@ -197,49 +197,54 @@ export default function PricingPage() {
     if (paypalLoaded && window.paypal) {
       // Render PayPal buttons for each plan only once
       plans.forEach(plan => {
-        if (!plan.restricted && plan.planType !== 'free' && !paypalButtonRendered.current[plan.planType]) {
-          window.paypal.Buttons({
-            createSubscription: function(data, actions) {
-              return actions.subscription.create({
-                'plan_id': paypalPlans[plan.planType]
-              })
-            },
-            onApprove: async function(data, actions) {
-              setLoading(prev => ({ ...prev, [plan.planType]: true }))
-              try {
-                const response = await fetch('/api/subscriptions/create', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({ 
-                    planType: plan.planType,
-                    paypalSubscriptionId: data.subscriptionID 
-                  }),
+        const buttonElement = document.getElementById(`paypal-button-${plan.planType}`)
+        if (buttonElement && !plan.restricted && plan.planType !== 'free' && !paypalButtonRendered.current[plan.planType]) {
+          try {
+            window.paypal.Buttons({
+              createSubscription: function(data, actions) {
+                return actions.subscription.create({
+                  'plan_id': paypalPlans[plan.planType]
                 })
-                if (response.ok) {
-                  toast.success(`${plan.name} subscription activated successfully!`)
-                  setTimeout(() => {
-                    window.location.reload();
-                  }, 1500)
-                } else {
-                  const error = await response.json()
-                  toast.error(error.error || 'Failed to activate subscription')
+              },
+              onApprove: async function(data, actions) {
+                setLoading(prev => ({ ...prev, [plan.planType]: true }))
+                try {
+                  const response = await fetch('/api/subscriptions/create', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                      planType: plan.planType,
+                      paypalSubscriptionId: data.subscriptionID 
+                    }),
+                  })
+                  if (response.ok) {
+                    toast.success(`${plan.name} subscription activated successfully!`)
+                    setTimeout(() => {
+                      window.location.reload();
+                    }, 1500)
+                  } else {
+                    const error = await response.json()
+                    toast.error(error.error || 'Failed to activate subscription')
+                  }
+                } catch (error) {
+                  console.error('Subscription error:', error)
+                  toast.error('Failed to process subscription')
+                } finally {
+                  setLoading(prev => ({ ...prev, [plan.planType]: false }))
                 }
-              } catch (error) {
-                console.error('Subscription error:', error)
-                toast.error('Failed to process subscription')
-              } finally {
+              },
+              onError: function(err) {
+                console.error('PayPal error:', err)
+                toast.error('Payment failed. Please try again.')
                 setLoading(prev => ({ ...prev, [plan.planType]: false }))
               }
-            },
-            onError: function(err) {
-              console.error('PayPal error:', err)
-              toast.error('Payment failed. Please try again.')
-              setLoading(prev => ({ ...prev, [plan.planType]: false }))
-            }
-          }).render(`#paypal-button-${plan.planType}`)
-          paypalButtonRendered.current[plan.planType] = true
+            }).render(`#paypal-button-${plan.planType}`)
+            paypalButtonRendered.current[plan.planType] = true
+          } catch (error) {
+            console.error(`Failed to render PayPal button for ${plan.planType}:`, error)
+          }
         }
       })
     }

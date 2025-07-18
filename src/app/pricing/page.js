@@ -21,10 +21,10 @@ export default function PricingPage() {
   const [paypalLoaded, setPaypalLoaded] = useState(false)
   const paypalButtonRendered = useRef({})
 
-  // Check if user can access institution plan
-  const canAccessInstitutionPlan = session?.user?.role === 'admin' || session?.user?.role === 'professor'
-  // Check if user can access student plan
-  const canAccessStudentPlan = session?.user?.role === 'student'
+  // Check if user can access plans - default to true if role is undefined
+  const userRole = session?.user?.role
+  const canAccessInstitutionPlan = !userRole || userRole === 'admin' || userRole === 'professor'
+  const canAccessStudentPlan = !userRole || userRole === 'student'
 
   // PayPal plan IDs (you'll need to create these in your PayPal dashboard)
   const paypalPlans = {

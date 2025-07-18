@@ -42,14 +42,11 @@ export default function Dashboard() {
   const isPremium = session?.user?.subscription === 'premium';
   const showPaywall = !isTrialActive && !isPremium;
 
-  // Debug info - remove this after fixing the issue
-  console.log('DEBUG - Session data:', {
+  // Keep minimal debug logging
+  console.log('Session status:', {
     subscription: session?.user?.subscription,
-    trialEndDate: session?.user?.trialEndDate,
     isTrialActive,
-    isPremium,
-    showPaywall,
-    now: now.toISOString()
+    showPaywall
   });
 
   // Ensure assignmentsUsed and assignmentsLimit are numbers
@@ -272,18 +269,6 @@ export default function Dashboard() {
                 <MessageSquare className="w-5 h-5 mr-2" />
                 Chat
               </Link>
-              {/* Debug button - remove after fixing */}
-              {showPaywall && (
-                <button
-                  onClick={() => {
-                    console.log('Refreshing session...');
-                    window.location.reload();
-                  }}
-                  className="btn-secondary-light text-sm"
-                >
-                  Refresh Session
-                </button>
-              )}
             </div>
           </div>
         </div>

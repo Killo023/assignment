@@ -47,12 +47,18 @@ const handler = NextAuth({
   ],
   callbacks: {
     async signIn({ user, account, profile }) {
-      console.log('DEBUG: signIn callback called for', user.email);
+      console.log('DEBUG: signIn callback called for', user.email, 'with account:', account?.provider);
       try {
+        console.log('DEBUG: Connecting to database in signIn...');
         await dbConnect();
+        console.log('DEBUG: Database connected, searching for existing user...');
+        
         let existingUser = await User.findOne({ email: user.email });
+        console.log('DEBUG: Existing user search result:', existingUser ? 'Found' : 'Not found');
+        
         if (!existingUser) {
           // Create new user
+          console.log('DEBUG: Creating new user...');
           const now = new Date();
           const trialEnd = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
           let userData = {
@@ -67,25 +73,46 @@ const handler = NextAuth({
             userData.institutionSubscription = 'trial';
             userData.institutionTrialEndDate = trialEnd;
           }
+          console.log('DEBUG: User data to save:', userData);
+          
           const newUser = new User(userData);
-          await newUser.save();
-          console.log('DEBUG: New user created with trial:', user.email);
+          const savedUser = await newUser.save();
+          console.log('DEBUG: New user created successfully:', {
+            id: savedUser._id,
+            email: savedUser.email,
+            subscription: savedUser.subscription,
+            trialEndDate: savedUser.trialEndDate
+          });
         } else {
+          console.log('DEBUG: Existing user found:', {
+            id: existingUser._id,
+            email: existingUser.email,
+            subscription: existingUser.subscription,
+            trialEndDate: existingUser.trialEndDate
+          });
+          
           // Update existing user to grant trial if missing or expired
           const now = new Date();
           if (!existingUser.trialEndDate || !existingUser.subscription || (existingUser.subscription !== 'trial' && existingUser.subscription !== 'premium') || new Date(existingUser.trialEndDate) < now) {
+            console.log('DEBUG: Updating existing user with new trial...');
             const trialEnd = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
             existingUser.subscription = 'trial';
             existingUser.trialEndDate = trialEnd;
-            await existingUser.save();
-            console.log('DEBUG: Existing user granted trial:', user.email);
+            const updatedUser = await existingUser.save();
+            console.log('DEBUG: Existing user updated with trial:', {
+              id: updatedUser._id,
+              email: updatedUser.email,
+              subscription: updatedUser.subscription,
+              trialEndDate: updatedUser.trialEndDate
+            });
           } else {
-            console.log('DEBUG: User already exists and has valid trial or premium:', user.email);
+            console.log('DEBUG: User already has valid trial or premium, no update needed');
           }
         }
         return true;
       } catch (error) {
         console.error('Sign in error:', error);
+        console.error('Sign in error stack:', error.stack);
         return true; // Allow sign-in even if there's an error
       }
     },

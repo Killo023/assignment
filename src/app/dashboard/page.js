@@ -41,6 +41,17 @@ export default function Dashboard() {
   const isTrialActive = session?.user?.subscription === 'trial' && session?.user?.trialEndDate && new Date(session.user.trialEndDate) > now;
   const isPremium = session?.user?.subscription === 'premium';
   const showPaywall = !isTrialActive && !isPremium;
+  
+  // Debug logging
+  console.log('Dashboard Paywall Debug:', {
+    subscription: session?.user?.subscription,
+    trialEndDate: session?.user?.trialEndDate,
+    isTrialActive,
+    isPremium,
+    showPaywall,
+    currentTime: now.toISOString(),
+    trialEndTime: session?.user?.trialEndDate ? new Date(session.user.trialEndDate).toISOString() : null
+  });
 
   // Ensure assignmentsUsed and assignmentsLimit are numbers
   const assignmentsUsed = Number(session?.user?.assignmentsUsed) || 0;

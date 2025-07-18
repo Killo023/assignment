@@ -7,6 +7,11 @@ import Assignment from '../../../models/Assignment'
 export async function GET(request) {
   try {
     const session = await getServerSession()
+    
+    if (!session || !session.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    
     console.log('Session email:', session?.user?.email);
 
     await dbConnect()

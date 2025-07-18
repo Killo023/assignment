@@ -7,8 +7,20 @@ export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     
-    if (!session) {
+    if (!session || !session.user) {
+      console.log('Institution subscription check: No session found');
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    console.log('Institution subscription check for:', session.user.email, 'Role:', session.user.role);
+
+    // Early return for student users to avoid unnecessary DB calls
+    if (session.user.role === 'student') {
+      return Response.json({ 
+        error: 'This endpoint is for institution users only',
+        subscription: 'free',
+        role: 'student' 
+      }, { status: 200 }); // Return 200 to avoid client errors
     }
 
     await dbConnect();
@@ -16,11 +28,13 @@ export async function GET() {
     const user = await User.findOne({ email: session.user.email });
     
     if (!user) {
+      console.error('User not found in DB:', session.user.email);
       return Response.json({ error: 'User not found' }, { status: 404 });
     }
 
     // Check if user has institution role
     if (user.role !== 'admin' && user.role !== 'professor') {
+      console.log('Access denied for role:', user.role);
       return Response.json({ error: 'Access denied' }, { status: 403 });
     }
 

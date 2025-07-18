@@ -44,14 +44,18 @@ export async function POST(request) {
     const saltRounds = 12
     const hashedPassword = await bcrypt.hash(password, saltRounds)
 
-    // Create new user
+    // Create new user with 7-day trial
+    const trialEndDate = new Date()
+    trialEndDate.setDate(trialEndDate.getDate() + 7)
+    
     const newUser = new User({
       name,
       email: email.toLowerCase(),
       password: hashedPassword,
-      subscription: 'free',
+      subscription: 'trial',
+      trialEndDate: trialEndDate,
       assignmentsUsed: 0,
-      assignmentsLimit: 3,
+      assignmentsLimit: 100, // Unlimited during trial
       role: role || 'student',
     })
 

@@ -39,6 +39,7 @@ const handler = NextAuth({
           image: user.image,
           role: user.role,
           subscription: user.subscription,
+          trialEndDate: user.trialEndDate,
           assignmentsUsed: user.assignmentsUsed,
           assignmentsLimit: user.assignmentsLimit == null ? 1 : user.assignmentsLimit
         };
@@ -95,6 +96,7 @@ const handler = NextAuth({
         token.id = user.id || user._id || token.id;
         token.role = user.role;
         token.subscription = user.subscription;
+        token.trialEndDate = user.trialEndDate;
         token.assignmentsUsed = user.assignmentsUsed;
         token.assignmentsLimit = user.assignmentsLimit;
       }
@@ -117,6 +119,7 @@ const handler = NextAuth({
           session.user.id = token.id || token.userId || session.user.id
           session.user.role = token.role
           session.user.subscription = token.subscription
+          session.user.trialEndDate = token.trialEndDate
           session.user.assignmentsUsed = token.assignmentsUsed
           session.user.assignmentsLimit = token.assignmentsLimit
         } else {

@@ -71,7 +71,17 @@ const handler = NextAuth({
           await newUser.save();
           console.log('DEBUG: New user created with trial:', user.email);
         } else {
-          console.log('DEBUG: User already exists:', user.email);
+          // Update existing user to grant trial if missing or expired
+          const now = new Date();
+          if (!existingUser.trialEndDate || !existingUser.subscription || (existingUser.subscription !== 'trial' && existingUser.subscription !== 'premium') || new Date(existingUser.trialEndDate) < now) {
+            const trialEnd = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+            existingUser.subscription = 'trial';
+            existingUser.trialEndDate = trialEnd;
+            await existingUser.save();
+            console.log('DEBUG: Existing user granted trial:', user.email);
+          } else {
+            console.log('DEBUG: User already exists and has valid trial or premium:', user.email);
+          }
         }
         return true;
       } catch (error) {

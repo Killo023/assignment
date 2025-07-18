@@ -125,6 +125,8 @@ const handler = NextAuth({
           if (user) {
             session.user.id = user._id.toString()
             session.user.subscription = user.subscription
+            session.user.trialEndDate = user.trialEndDate // Ensure trialEndDate is included
+            session.user.institutionTrialEndDate = user.institutionTrialEndDate // For institution users
             session.user.assignmentsUsed = user.assignmentsUsed
             session.user.assignmentsLimit = (user.assignmentsLimit == null ? 1 : user.assignmentsLimit)
             session.user.role = user.role // <-- Add this line

@@ -269,6 +269,23 @@ export default function Dashboard() {
                 <MessageSquare className="w-5 h-5 mr-2" />
                 Chat
               </Link>
+              {/* Debug session button */}
+              <button
+                onClick={async () => {
+                  try {
+                    const response = await fetch('/api/debug-session');
+                    const data = await response.json();
+                    console.log('DEBUG SESSION RESPONSE:', data);
+                    alert('Debug info logged to console (F12). Status: ' + (response.ok ? 'Success' : 'Error'));
+                  } catch (error) {
+                    console.error('Debug session error:', error);
+                    alert('Debug failed - check console');
+                  }
+                }}
+                className="btn-secondary-light text-sm"
+              >
+                Debug Session
+              </button>
             </div>
           </div>
         </div>

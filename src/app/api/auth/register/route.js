@@ -44,21 +44,41 @@ export async function POST(request) {
     const saltRounds = 12
     const hashedPassword = await bcrypt.hash(password, saltRounds)
 
-    // Create new user
-    const newUser = new User({
+    // Create new user with 7-day trial
+    const now = new Date();
+    const trialEnd = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    
+    const userData = {
       name,
       email: email.toLowerCase(),
       password: hashedPassword,
-      subscription: 'free',
+      subscription: 'trial',
+      trialEndDate: trialEnd,
       assignmentsUsed: 0,
       assignmentsLimit: 3,
       role: role || 'student',
-    })
+    };
 
-    await newUser.save()
+    // Add institution trial for admin/professor
+    if (userData.role === 'admin' || userData.role === 'professor') {
+      userData.institutionSubscription = 'trial';
+      userData.institutionTrialEndDate = trialEnd;
+    }
+
+    console.log('Creating new user with data:', userData);
+    const newUser = new User(userData);
+    const savedUser = await newUser.save();
+    
+    console.log('User created successfully:', {
+      id: savedUser._id,
+      email: savedUser.email,
+      subscription: savedUser.subscription,
+      trialEndDate: savedUser.trialEndDate
+    });
 
     // Return success without password
-    const { password: _, ...userWithoutPassword } = newUser.toObject()
+    const userWithoutPassword = savedUser.toJSON();
+    delete userWithoutPassword.password;
 
     return NextResponse.json(
       { 

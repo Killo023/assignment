@@ -102,19 +102,30 @@ const handler = NextAuth({
     },
     async session({ session, token }) {
       try {
-        console.log('DEBUG: session callback token:', token)
-        console.log('DEBUG: session callback session.user before:', session.user)
+        console.log('DEBUG: session callback started')
+        console.log('DEBUG: session.user.email:', session?.user?.email)
+        console.log('DEBUG: token:', token)
+        
+        if (!session?.user?.email) {
+          console.log('DEBUG: No user email in session, returning session as-is')
+          return session
+        }
         
         // Always load real user data from database
+        console.log('DEBUG: Connecting to database...')
         await dbConnect()
+        console.log('DEBUG: Database connected, searching for user...')
+        
         const user = await User.findOne({ email: session.user.email })
+        console.log('DEBUG: Database query result:', user ? 'User found' : 'User not found')
         
         if (user) {
           console.log('DEBUG: Found user in database:', { 
             email: user.email, 
             subscription: user.subscription, 
             trialEndDate: user.trialEndDate,
-            role: user.role 
+            role: user.role,
+            _id: user._id
           })
           
           session.user.id = user._id.toString()
@@ -125,14 +136,20 @@ const handler = NextAuth({
           session.user.assignmentsUsed = user.assignmentsUsed
           session.user.assignmentsLimit = (user.assignmentsLimit == null ? 1 : user.assignmentsLimit)
           session.user.role = user.role
+          
+          console.log('DEBUG: Updated session.user:', session.user)
         } else {
           console.log('DEBUG: No user found in database for email:', session.user.email)
+          // Try to find all users to debug
+          const allUsers = await User.find({}).limit(5)
+          console.log('DEBUG: Sample users in database:', allUsers.map(u => ({ email: u.email, subscription: u.subscription })))
         }
         
-        console.log('DEBUG: session callback session.user after:', session.user)
+        console.log('DEBUG: Final session.user:', session.user)
         return session
       } catch (error) {
-        console.error('Session error:', error)
+        console.error('Session callback error:', error)
+        console.error('Error stack:', error.stack)
         return session
       }
     },

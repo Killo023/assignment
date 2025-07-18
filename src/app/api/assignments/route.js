@@ -11,12 +11,16 @@ const authOptions = {
 
 export async function GET(request) {
   try {
+    console.log('DEBUG: Assignments API - Getting session...')
     const session = await getServerSession(authOptions)
-    console.log('Assignments API - Session data:', session);
+    console.log('DEBUG: Assignments API - Raw session:', JSON.stringify(session, null, 2));
 
     if (!session || !session.user) {
+      console.log('DEBUG: Assignments API - No session or user found')
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+
+    console.log('DEBUG: Assignments API - User email:', session.user.email)
 
     await dbConnect()
     
